@@ -2,10 +2,13 @@ package ic.ufal.br.logicalInference;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Main {
 	
 	static LogicalExpression AST;
+	static ArrayList<LogicalExpression> atoms = new ArrayList<LogicalExpression>(); 
 	
 	static void printAST(LogicalExpression node){
 		if(node.left != null)
@@ -32,11 +35,14 @@ public class Main {
 		}
 		
 		if(node.left != null && node.left.categ == Categories.id){
-			AST = idk(AST, node.left);
+			
+			atoms.add(node.left);
+			//AST = idk(AST, node.left);
 			return node.right;
 		}
-		else if(node.right != null && node.right.categ == Categories.id){
-			AST = idk(AST, node.right);
+		else if(node.right != null && node.right.categ == Categories.id ){
+			atoms.add(node.right);
+			//AST = idk(AST, node.right);
 			return node.left;
 		}
 		
@@ -53,7 +59,8 @@ public class Main {
 		if(node.right != null)
 			node.right = idk(node.right, atom);
 		
-		if(node.right != null && node.right.token.equals(atom.token)){
+		if(node.right != null && node.right.token.equals(atom.token) 
+				&& node != AST){
 			if(atom.nid == true){
 				node.right = new Atom("false", Categories.prFalse, null, null);
 			}
@@ -63,7 +70,8 @@ public class Main {
 			
 			return node.solve();
 		}
-		if(node.left != null && node.left.token.equals(atom.token)){
+		if(node.left != null && node.left.token.equals(atom.token) 
+				&& node != AST){
 			if(atom.nid == true){
 				node.left = new Atom("false", Categories.prFalse, null, null);
 			}
@@ -79,12 +87,22 @@ public class Main {
 	
 	static void infer(){
 
-		AST = searchAtom(AST);
+		for(int i = 0; i < 100; i++){
+			AST = searchAtom(AST);
+			
+			for(int j = atoms.size() - 1; atoms.size() > 0; j = atoms.size() - 1){ 
+				AST = idk(AST, atoms.get(j));
+				atoms.remove(j);
+			
+			}
+		}
+		
+		
+		
 		System.out.println("INFER:");
 		printAST(AST);
-//		AST = AST.solve();
-//		System.out.println("INFER2:");
-//		printAST(AST);
+		
+		
 	}
 	
 	
