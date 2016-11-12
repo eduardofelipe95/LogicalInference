@@ -7,6 +7,7 @@ public abstract class LogicalExpression {
 	LogicalExpression father;
 	LogicalExpression left;
 	LogicalExpression right;
+	boolean isRoot;
 	
 	LogicalExpression(String token, Categories categ, LogicalExpression left, LogicalExpression right){
 		this.nid = false;
@@ -14,6 +15,7 @@ public abstract class LogicalExpression {
 		this.categ = categ;
 		this.right = right;
 		this.left = left;
+		this.isRoot = false;
 	}
 	
 	abstract LogicalExpression solve();
